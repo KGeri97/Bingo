@@ -2,9 +2,17 @@ using System.Collections.Generic;
 using UnityEngine;
 public static class BoardUtils
 {
+    private static GameObject _tilePrefab;
+    private static GameObject _rowPrefab;
+
+    public static void InitializePrefabs(GameObject tilePrefabReference, GameObject rowPrefabReference) {
+        _tilePrefab = tilePrefabReference;
+        _rowPrefab = rowPrefabReference;
+    }
+
     public static Board GenerateBoard(int width, int height, int maxNumber) {
         if (maxNumber < width * height) {
-            Debug.LogWarning("There is not enough numbers to fill up the board");
+            Debug.LogError("There is not enough numbers to fill up the board");
             return null;
         }
 
@@ -35,10 +43,22 @@ public static class BoardUtils
         return board;
     }
 
-    public static void DrawBoard(Board board, GameObject tilePrefab, GameObject rowPrefab, Transform parent) {
+    /// <summary>
+    /// Draws the board with acual values
+    /// </summary>
+    /// <param name="board"></param>
+    /// <param name="parent"></param>
+    public static void DrawBoard(Board board, Transform parent) {
+        
+        if (_tilePrefab == null || _rowPrefab == null) {
+            Debug.LogError("Prefabs not initialized. Call InitializePrefabs before using DrawBoard.");
+            return;
+        }
+
         //Destroy any already existing child before we draw a new board
         if (parent.childCount > 0) {
             List<Transform> children = new List<Transform>();
+            //Ensuring that the collection does not change before modifying the collection
             foreach (Transform child in parent) {
                 children.Add(child);
             }
@@ -48,12 +68,46 @@ public static class BoardUtils
             }
         }
 
-        for (int i = 0; i < board.Grid.GetLength(0); i++) {
-            Transform rowTransform = Object.Instantiate(rowPrefab, parent).transform;
+        for (int i = 0; i < GameManager.Instance.Rows; i++) {
+            Transform rowTransform = Object.Instantiate(_rowPrefab, parent).transform;
 
-            for (int j = 0; j < board.Grid.GetLength(1); j++) {
-                Tile tile = Object.Instantiate(tilePrefab, rowTransform).GetComponent<Tile>();
+            for (int j = 0; j < GameManager.Instance.Columns; j++) {
+                Tile tile = Object.Instantiate(_tilePrefab, rowTransform).GetComponent<Tile>();
                 tile.Initialize(j, i, board.Grid[i,j]);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Draws the board with placeholder values
+    /// </summary>
+    /// <param name="parent"></param>
+    public static void DrawBoard(Transform parent) {
+
+        if (_tilePrefab == null || _rowPrefab == null) {
+            Debug.LogError("Prefabs not initialized. Call InitializePrefabs before using DrawBoard.");
+            return;
+        }
+
+        //Destroy any already existing child before we draw a new board
+        if (parent.childCount > 0) {
+            List<Transform> children = new List<Transform>();
+            //Ensuring that the collection does not change before modifying the collection
+            foreach (Transform child in parent) {
+                children.Add(child);
+            }
+
+            foreach (Transform child in children) {
+                Object.Destroy(child.gameObject);
+            }
+        }
+
+        for (int i = 0; i < GameManager.Instance.Rows; i++) {
+            Transform rowTransform = Object.Instantiate(_rowPrefab, parent).transform;
+
+            for (int j = 0; j < GameManager.Instance.Columns; j++) {
+                Tile tile = Object.Instantiate(_tilePrefab, rowTransform).GetComponent<Tile>();
+                tile.Initialize(j, i, GameManager.Instance.Columns * i + j);
             }
         }
     }

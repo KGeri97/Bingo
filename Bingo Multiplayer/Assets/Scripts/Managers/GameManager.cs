@@ -6,10 +6,13 @@ public class GameManager : NetworkBehaviour {
 
     [SerializeField]
     private int _columns;
+    public int Columns => _columns;
     [SerializeField]
     private int _rows;
+    public int Rows => _rows;
     [SerializeField]
     private int _maxNumber;
+    public int MaxNumber => _maxNumber;
 
     public PlayerType PlayerType{ get; private set; }
 
@@ -39,7 +42,7 @@ public class GameManager : NetworkBehaviour {
     #endregion
 
     public override void OnNetworkSpawn() {
-        Debug.Log("On network spawn: " + NetworkManager.Singleton.LocalClientId);
+        Debug.Log(message: "On network spawn: " + NetworkManager.Singleton.LocalClientId, context: this);
     }
 }
 

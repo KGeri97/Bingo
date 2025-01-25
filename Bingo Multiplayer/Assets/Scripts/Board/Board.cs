@@ -1,7 +1,7 @@
 public class Board {
     /// <summary>
-    /// Dimension 0: Height; 
-    /// Dimension 1: Width;
+    /// Dimension 0: Rows; 
+    /// Dimension 1: Columns;
     /// </summary>
     public int[,] Grid { get; private set; }
 

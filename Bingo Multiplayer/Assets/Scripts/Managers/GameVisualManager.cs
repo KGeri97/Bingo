@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class GameVisualManager : MonoBehaviour {
+public class GameVisualManager : NetworkBehaviour {
 
     public static GameVisualManager Instance;
 
@@ -32,6 +33,9 @@ public class GameVisualManager : MonoBehaviour {
             _clientContainer.SetActive(true);
         else
             _hostContainer.SetActive(true);
+
+        BoardUtils.InitializePrefabs(_tilePrefab, _rowPrefab);
+
         //BoardUtils.DrawBoard(board, _tilePrefab, _rowPrefab, _gridContainer);
     }
 
