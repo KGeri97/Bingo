@@ -10,27 +10,25 @@ public static class BoardUtils
         _rowPrefab = rowPrefabReference;
     }
 
-    public static Board GenerateBoard(int width, int height, int maxNumber) {
-        if (maxNumber < width * height) {
+    public static Board GenerateBoard(int columns, int rows, int maxNumber) {
+        if (maxNumber < columns * rows) {
             Debug.LogError("There is not enough numbers to fill up the board");
             return null;
         }
 
-        System.Random randomNumberGenerator = new();
-
-        int[,] numberGrid = new int[height, width];
+        TileData[,] numberGrid = new TileData[rows, columns];
         List<int> numbers = new();
 
         for (int i = 1; i <= maxNumber; i++) {
             numbers.Add(i);
         }
 
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
 
-                int randomIndex = randomNumberGenerator.Next(0, numbers.Count);
+                int randomIndex = RNG.Next(0, numbers.Count);
 
-                numberGrid[i, j] = numbers[randomIndex];
+                numberGrid[i, j].Value = numbers[randomIndex];
                 numbers.RemoveAt(randomIndex);
 
                 //Debug.Log(numberGrid[i,j]);
@@ -73,42 +71,42 @@ public static class BoardUtils
 
             for (int j = 0; j < GameManager.Instance.Columns; j++) {
                 Tile tile = Object.Instantiate(_tilePrefab, rowTransform).GetComponent<Tile>();
-                tile.Initialize(j, i, board.Grid[i,j]);
+                tile.Initialize(j, i, board.Grid[i,j].Value, board.Grid[i,j].IsSelected);
             }
         }
     }
 
-    /// <summary>
-    /// Draws the board with placeholder values
-    /// </summary>
-    /// <param name="parent"></param>
-    public static void DrawBoard(Transform parent) {
+    ///// <summary>
+    ///// Draws the board with placeholder values
+    ///// </summary>
+    ///// <param name="parent"></param>
+    //public static void DrawBoard(Transform parent) {
 
-        if (_tilePrefab == null || _rowPrefab == null) {
-            Debug.LogError("Prefabs not initialized. Call InitializePrefabs before using DrawBoard.");
-            return;
-        }
+    //    if (_tilePrefab == null || _rowPrefab == null) {
+    //        Debug.LogError("Prefabs not initialized. Call InitializePrefabs before using DrawBoard.");
+    //        return;
+    //    }
 
-        //Destroy any already existing child before we draw a new board
-        if (parent.childCount > 0) {
-            List<Transform> children = new List<Transform>();
-            //Ensuring that the collection does not change before modifying the collection
-            foreach (Transform child in parent) {
-                children.Add(child);
-            }
+    //    //Destroy any already existing child before we draw a new board
+    //    if (parent.childCount > 0) {
+    //        List<Transform> children = new List<Transform>();
+    //        //Ensuring that the collection does not change before modifying the collection
+    //        foreach (Transform child in parent) {
+    //            children.Add(child);
+    //        }
 
-            foreach (Transform child in children) {
-                Object.Destroy(child.gameObject);
-            }
-        }
+    //        foreach (Transform child in children) {
+    //            Object.Destroy(child.gameObject);
+    //        }
+    //    }
 
-        for (int i = 0; i < GameManager.Instance.Rows; i++) {
-            Transform rowTransform = Object.Instantiate(_rowPrefab, parent).transform;
+    //    for (int i = 0; i < GameManager.Instance.Rows; i++) {
+    //        Transform rowTransform = Object.Instantiate(_rowPrefab, parent).transform;
 
-            for (int j = 0; j < GameManager.Instance.Columns; j++) {
-                Tile tile = Object.Instantiate(_tilePrefab, rowTransform).GetComponent<Tile>();
-                tile.Initialize(j, i, GameManager.Instance.Columns * i + j);
-            }
-        }
-    }
+    //        for (int j = 0; j < GameManager.Instance.Columns; j++) {
+    //            Tile tile = Object.Instantiate(_tilePrefab, rowTransform).GetComponent<Tile>();
+    //            tile.Initialize(j, i, GameManager.Instance.Columns * i + j + 1);
+    //        }
+    //    }
+    //}
 }

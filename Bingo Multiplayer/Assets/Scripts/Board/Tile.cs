@@ -1,46 +1,67 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class Tile : MonoBehaviour
 {
-    //Is this needed?
-    private int _xPos = -1;
-    private int _yPos = -1;
-    private int _value = -1;
-
     private TMP_Text _textMesh;
     private Image _image;
+    private Button _tileButton;
+
+    private int _xPos;
+    private int _yPos;
 
     [SerializeField]
     private Color _colorSelected;
     [SerializeField]
     private Color _colorDeselected;
-    private bool _isSelected;
 
+    private void OnEnable() {
+        GameManager.Instance.OnTileClicked += OnTileClicked;
+    }
+
+    private void OnDisable() {
+        GameManager.Instance.OnTileClicked -= OnTileClicked;
+    }
 
     private void Awake() {
         _textMesh = GetComponentInChildren<TMP_Text>();
-        _image = GetComponentInChildren<Image>();
+        _image = GetComponent<Image>();
+        _tileButton = GetComponent<Button>();
+        _tileButton.onClick.AddListener(OnClick);
     }
 
     public void OnClick() {
-        _isSelected = !_isSelected;
-
-        if (_isSelected)
-            _image.color = _colorSelected;
-        else
-            _image.color = _colorDeselected;
+        GameManager.Instance.ClickedOnTile(_xPos, _yPos);
     }
 
-    public void Initialize(int x, int y, int value) {
+    private void OnTileClicked(object sender, GameManager.OnTileClickedEventArgs e) {
+        if (e.X != _xPos || e.Y != _yPos)
+            return;
+
+        if (e.Selected) {
+            _image.color = _colorSelected;
+        }
+        else {
+            _image.color = _colorDeselected;
+        }
+
+    }
+
+    public void Initialize(int x, int y, int value, bool isSelected) {
         _xPos = x;
         _yPos = y;
-        _value = value;
-
         _textMesh.text = value.ToString();
-        _isSelected = false;
-        _image.color = _colorDeselected;
+
+        if (isSelected) {
+            _image.color = _colorSelected;
+        }
+        else {
+            _image.color = _colorDeselected;
+        }
+
     }
 }

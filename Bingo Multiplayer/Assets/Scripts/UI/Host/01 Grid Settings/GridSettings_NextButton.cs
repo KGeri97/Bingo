@@ -16,16 +16,18 @@ public class GridSettings_NextButton : MonoBehaviour {
     [SerializeField]
     private TMP_InputField _gridSettingsMaxNumber;
 
-    [Header("UI Containers")]
-    [SerializeField]
     private GameObject _gridSettingsContainer;
-    [SerializeField]
     private GameObject _goalSettingsContainer;
 
     private void Awake() {
         _gridSettingsNextButton = GetComponent<Button>();
 
         _gridSettingsNextButton.onClick.AddListener(SubmitGridSettings);
+    }
+
+    private void Start() {
+        _gridSettingsContainer = GameVisualManager.Instance.GridSettingsContainer;
+        _goalSettingsContainer = GameVisualManager.Instance.GoalSettingsContainer;
     }
 
     private void SubmitGridSettings() {
